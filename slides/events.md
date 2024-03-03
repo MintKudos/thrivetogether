@@ -70,16 +70,18 @@ Thrive Together is a new prosocial AI companion to thoughtfully match individual
 
 ---
 
-<br/><br/><br/>
-Thrive Together is a new prosocial AI companion to thoughtfully match individuals with spontaneous interests and facilitate shared activities.
-
----
-
 ## The problem:
 
 Loneliness is at crisis levels and it is causing deaths worldwide.
 
-###### [_Surgeon General Advisory Raises Alarm about the Devastating Impact of the Epidemic of Loneliness_](https://www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.html)
+<br/><br/><br/><br/><br/>
+
+###### [_> Surgeon General Advisory Raises Alarm about the Devastating Impact of the Epidemic of Loneliness <_](https://www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.html)
+
+---
+
+<br/><br/><br/>
+Thrive Together is a new prosocial AI companion to thoughtfully match individuals with spontaneous interests and facilitate shared activities.
 
 ---
 
