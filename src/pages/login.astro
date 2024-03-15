@@ -1,0 +1,72 @@
+---
+import Layout from '../components/layout.astro'
+import Nav from '../components/nav.astro'
+import { accessTokenName, refreshTokenName } from '../utils/config'
+import { getUser } from '../utils/supabaseServer'
+
+const accessToken = Astro.cookies.get(accessTokenName)?.value
+const refreshToken = Astro.cookies.get(refreshTokenName)?.value
+
+// in case the user is already logged in we redirect to profile page
+const userData = await getUser({ accessToken, refreshToken })
+if (userData) {
+  return Astro.redirect('/')
+}
+
+---
+
+<Layout title='login' isLoggedIn={false}>
+  <Nav activeUrl='login' isLoggedIn={false} />
+  <p class="description">Sign in via magic link with your email below</p>
+  <form class="form-widget">
+    <label for="email">Email:</label>
+    <input
+        id="email"
+        name="email"
+        class="inputField"
+        type="email"
+        placeholder="Your email"
+        value="jdunlap@outlook.com"
+    />
+    <button type="submit" aria-live="polite">
+      <span>Send magic link</span>
+    </button>
+  </form>
+</Layout>
+
+<script>
+import { supabase } from '../utils/supabaseBrowser'
+
+// The auth logic is executed on the client,
+// tokens are copied in cookies, which are then accessed on the server
+
+const form = document.querySelector('.form-widget')
+const submitBtn = document.querySelector('.form-widget button')
+form!.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement);
+    const email = formData.get('email') as string
+    if (email) {
+        try {
+          submitBtn!.textContent = 'Loading'
+          const { error } = await supabase.auth.signInWithOtp({ email })
+          if (error) throw error
+          alert('Check your email for the login link!')
+        } catch (error) {
+          if (error instanceof Error) {
+            alert(error.message)
+          }
+        } finally {
+          submitBtn!.textContent = 'Send magic link'
+        }
+    }
+})
+</script>
+
+<style>
+form {
+    display: flex;
+    gap: 2rem;
+    align-items: center
+}
+</style>
