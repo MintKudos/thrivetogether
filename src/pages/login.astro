@@ -43,7 +43,8 @@ import { supabase } from '../utils/supabaseBrowser'
 const form = document.querySelector('.form-widget')
 const submitBtn = document.querySelector('.form-widget button')
 form!.addEventListener('submit', async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    console.log('submit form');
     const formData = new FormData(e.target as HTMLFormElement);
     const email = formData.get('email') as string
     if (email) {
