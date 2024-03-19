@@ -5,6 +5,8 @@ import * as readme from '../../README.md'
 import { getUser } from '../utils/supabaseServer'
 import { accessTokenName, refreshTokenName } from '../utils/config'
 
+import Jitsi from '../components/jitsi.astro'
+
 // we use README.md as content of the homepage
 const readmeCompiledContent = readme.compiledContent()
 
@@ -12,11 +14,18 @@ const accessToken = Astro.cookies.get(accessTokenName)?.value
 const refreshToken = Astro.cookies.get(refreshTokenName)?.value
 
 const userData = await getUser({ accessToken, refreshToken })
-const isLoggedIn = !!userData
+const isLoggedIn = !!userData;
+
+if(isLoggedIn) {
+	const dyteSession = await fetch('/api/dyte/session');
+}
 ---
 
 <Layout title='home' isLoggedIn={isLoggedIn}>
     <Nav activeUrl={'home'} isLoggedIn={isLoggedIn}/>
+
+	{ isLoggedIn && <Jitsi/> }
+	<br/>
     <div set:html={ readmeCompiledContent } />
 </Layout>
 

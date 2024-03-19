@@ -16,7 +16,10 @@ const { title, isLoggedIn } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Supabase Astro Serverside auth - {title}</title>
-        <script src='/external_api.js' is:inline/>
+        <!-- <script type="module">
+            import { defineCustomElements } from 'https://cdn.jsdelivr.net/npm/@dytesdk/ui-kit@1.66.0/loader/index.es2017.js';
+            defineCustomElements();
+        </script> -->
 	</head>
 	<body data-logged-in={isLoggedIn}>
         <main>

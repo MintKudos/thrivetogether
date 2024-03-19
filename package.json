@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "ThriveTogetherAI",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -13,9 +13,9 @@
   "dependencies": {
     "@astrojs/check": "^0.5.9",
     "@astrojs/cloudflare": "^9.1.0",
-    "@astrojs/node": "^6.0.0",
-    "@supabase/supabase-js": "^2.33.1",
-    "astro": "^3.0.8",
+    "@astrojs/node": "^8.2.4",
+    "@supabase/supabase-js": "^2.39.8",
+    "astro": "^4.5.6",
     "typescript": "^5.4.2"
   }
 }

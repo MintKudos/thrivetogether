@@ -1,5 +1,4 @@
 ---
-import Jitsi from './jitsi.astro'
 interface Props {
     activeUrl: string;
     isLoggedIn: boolean;
@@ -17,8 +16,8 @@ const pages = isLoggedIn ? ['home', 'profile'] : ['home', 'login']
             </a>
     )}
     { isLoggedIn && <div class='logout-action'>logout</div> }
-    { isLoggedIn && <Jitsi/> }
 </nav>
+
 <style>
     nav {
 	    margin: auto;
