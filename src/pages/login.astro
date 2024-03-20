@@ -67,7 +67,7 @@ form!.addEventListener('submit', async function(e) {
     if (email) {
         try {
           submitBtn!.textContent = 'Loading'
-          const { error } = await supabase.auth.signInWithOtp({ email, options: { redirectTo: url, emailRedirectTo: url } } as any);
+          const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: url } });
           if (error) throw error;
           alert('Check your email for the login link!')
         } catch (error) {
