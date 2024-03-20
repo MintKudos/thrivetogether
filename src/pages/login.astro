@@ -13,12 +13,24 @@ if (userData) {
   return Astro.redirect('/')
 }
 
+const getURL = () => {
+  let url =
+      Astro.url.href || window.location.host ||
+    'http://localhost:3000/'
+  // Make sure to include `https://` when not localhost.
+  url = url.includes('http') ? url : `https://${url}`
+  // Make sure to include a trailing `/`.
+  url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+  console.log('url', url)
+  return url
+}
+let url = getURL();
 ---
 
 <Layout title='login' isLoggedIn={false}>
   <Nav activeUrl='login' isLoggedIn={false} />
   <p class="description">Sign in via magic link with your email below</p>
-  <form class="form-widget">
+  <form class="form-widget" data-message={url}>
     <label for="email">Email:</label>
     <input
         id="email"
@@ -37,21 +49,26 @@ if (userData) {
 <script>
 import { supabase } from '../utils/supabaseBrowser'
 
+
+
 // The auth logic is executed on the client,
 // tokens are copied in cookies, which are then accessed on the server
 
 const form = document.querySelector('.form-widget')
 const submitBtn = document.querySelector('.form-widget button')
-form!.addEventListener('submit', async (e) => {
+form!.addEventListener('submit', async function(e) {
     e.preventDefault();
-    console.log('submit form');
+    let url = this.dataset.message || window.location.host || 'http://localhost:3000/';;
+    console.log('submit', url, this.dataset.message);
+    // alert(url);
+    // return;
     const formData = new FormData(e.target as HTMLFormElement);
     const email = formData.get('email') as string
     if (email) {
         try {
           submitBtn!.textContent = 'Loading'
-          const { error } = await supabase.auth.signInWithOtp({ email })
-          if (error) throw error
+          const { error } = await supabase.auth.signInWithOtp({ email, options: { redirectTo: url, emailRedirectTo: url } } as any);
+          if (error) throw error;
           alert('Check your email for the login link!')
         } catch (error) {
           if (error instanceof Error) {
