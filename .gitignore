@@ -1,4 +1,5 @@
 # build output
+.env.local
 dist/
 # generated types
 .astro/

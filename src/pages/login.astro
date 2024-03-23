@@ -1,90 +1,86 @@
 ---
-import Layout from '../components/layout.astro'
-import Nav from '../components/nav.astro'
-import { accessTokenName, refreshTokenName } from '../utils/config'
-import { getUser } from '../utils/supabaseServer'
-
-const accessToken = Astro.cookies.get(accessTokenName)?.value
-const refreshToken = Astro.cookies.get(refreshTokenName)?.value
-
-// in case the user is already logged in we redirect to profile page
-const userData = await getUser({ accessToken, refreshToken })
-if (userData) {
-  return Astro.redirect('/')
+let phone = Astro.url.searchParams.get("phone")! || "";
+let showOtpForm = phone?.length > 0;
+if (phone) {
+  Astro.response.headers.set("Set-Cookie", `phone=${phone}; Path=/;`);
+} else {
+  phone = Astro.cookies.get("phone")?.value || "";
 }
-
-const getURL = () => {
-  let url =
-      Astro.url.href || window.location.host ||
-    'http://localhost:3000/'
-  // Make sure to include `https://` when not localhost.
-  url = url.includes('http') ? url : `https://${url}`
-  // Make sure to include a trailing `/`.
-  url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
-  console.log('url', url)
-  return url
-}
-let url = getURL();
 ---
 
-<Layout title='login' isLoggedIn={false}>
-  <Nav activeUrl='login' isLoggedIn={false} />
-  <p class="description">Sign in via magic link with your email below</p>
-  <form class="form-widget" data-message={url}>
-    <label for="email">Email:</label>
-    <input
-        id="email"
-        name="email"
-        class="inputField"
-        type="email"
-        placeholder="Your email"
-        value="jdunlap@outlook.com"
-    />
-    <button type="submit" aria-live="polite">
-      <span>Send magic link</span>
-    </button>
-  </form>
-</Layout>
+<div>
+  {
+    showOtpForm ? (
+      <form id="form">
+        <label for="otp">Enter OTP:</label>
+        <input type="text" id="otp" name="otp" />
+        <input type="hidden" name="phone" value={phone} />
+        <button type="submit">Verify OTP</button>
+      </form>
+    ) : (
+      <form action="#" id="form">
+        <h1>User Registration</h1>
+        <label for="phone">Phone Number:</label>
+        +<input type="tel" id="phone" name="phone" value={phone || null} />
+        <button type="submit">Send OTP</button>
+      </form>
+    )
+  }
+</div>
 
 <script>
-import { supabase } from '../utils/supabaseBrowser'
+  import { supabase } from "../utils/supabaseBrowser";
 
-
-
-// The auth logic is executed on the client,
-// tokens are copied in cookies, which are then accessed on the server
-
-const form = document.querySelector('.form-widget')
-const submitBtn = document.querySelector('.form-widget button')
-form!.addEventListener('submit', async function(e) {
+  // get form id form
+  const form = window.document.getElementById("form");
+  form?.addEventListener("submit", async function (e) {
     e.preventDefault();
-    let url = this.dataset.message || window.location.host || 'http://localhost:3000/';;
-    console.log('submit', url, this.dataset.message);
-    // alert(url);
-    // return;
     const formData = new FormData(e.target as HTMLFormElement);
-    const email = formData.get('email') as string
-    if (email) {
-        try {
-          submitBtn!.textContent = 'Loading'
-          const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: url } });
-          if (error) throw error;
-          alert('Check your email for the login link!')
-        } catch (error) {
-          if (error instanceof Error) {
-            alert(error.message)
-          }
-        } finally {
-          submitBtn!.textContent = 'Send magic link'
-        }
-    }
-})
-</script>
+    let phoneField = formData.get("phone") as string;
+    if(phoneField.charAt(0) === '+') phoneField = phoneField.substring(1);
+    if(phoneField.length === 10) phoneField = "1" + phoneField;
 
-<style>
-form {
-    display: flex;
-    gap: 2rem;
-    align-items: center
-}
-</style>
+    let submitBtn = form?.querySelector("button"); // Add this line
+
+    const otp = formData.get("otp") as string;
+    
+
+    if (phoneField) {
+      try {
+        submitBtn!.textContent = "Loading";
+        // login with SMS
+        console.log('Login: +' + phoneField);
+        const { error, data } = await supabase.auth.signInWithOtp({
+          phone: '+' + phoneField,
+
+          options: { shouldCreateUser: true },
+        });
+        if (error) throw error;
+        alert("Check your phone for the login link!" + JSON.stringify(data));
+        window.location.href = "/login?phone=" + phoneField;
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message);
+        }
+      } finally {
+        submitBtn!.textContent = "Send magic link";
+      }
+    }
+    // Add this part for OTP verification
+    else if (otp) {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: phoneField,
+        token: otp,
+        type: "sms",
+      });
+      if (error) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert("OTP verified successfully!");
+        Astro.redirect("/play");
+      }
+    } else {
+      alert("Please enter a valid OTP");
+    }
+  });
+</script>

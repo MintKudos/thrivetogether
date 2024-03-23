@@ -16,6 +16,6 @@
     "@astrojs/node": "^8.2.5",
     "@supabase/supabase-js": "^2.39.8",
     "astro": "^4.5.8",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }
